@@ -10,73 +10,60 @@
 * display the four cards picked (it is possible acard may be picked twice).      *
 *********************************************************************************/
 public class Exercise_07_24 {
-	/** Main method */
-	public static void main(String[] args) {
-		int[] deck = new int[52];
-		int[] picks = new int[4];
+public static void main(String[] args) {
+        //initialize the deck
+        String[] suits = {"Hearts", "Spades", "Diamonds", "Clubs"}; // cards[i] / values.length = suit
+        String[] values = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"}; // cards[i] % values.length = value
+        int[] cards = new int[52];
+        for (int i = 0; i < cards.length; i++) {
+            cards[i] = i;
+        }
 
-		// Initialize the cards
-		for (int i = 0; i < deck.length; i++)
-			deck[i] = i;
+        int numberOfPicks = 0;
+        int[] pickedCards = new int[4];
+        for (int i = 0; i < pickedCards.length; i++) {
+            pickedCards[i] = -1;
+        }
 
-		// Shuffle the cards
-		shuffleCards(deck);
 
-		int count = 0; // number of picks
-		do {
-			pickCards(deck, picks);
-			count++;
-		} while (!isOneOFEachSuit(picks));
+        //we need to pick four cards of different suit
+        for (int i = 0; i < pickedCards.length; i++) {
+            while (true) {
+                int random = (int) (Math.random() * cards.length); // pick a random card
+                numberOfPicks++;
+                shuffle(cards); // shuffle all cards together with the picked
+                if (isDifferentSuit(pickedCards, random)) {
+                    //if it's different suit - remember it as picked
+                    pickedCards[i] = random;
+                    break;
+                }//if not - continue picking
+            }
+            System.out.printf("%s of %s%n", values[pickedCards[i] % 13], suits[pickedCards[i] / 13]);
+        }
 
-		// Display the four cards picked
-		print(picks);
+        System.out.printf("Number of picks: %d%n", numberOfPicks);
 
-		// Display the number of picks needed to get four cards from each suit
-		System.out.println("Number of picks: " + count);
-	}
+    }
 
-	/** shuffleCards randomly shuffles a deck of cards */
-	public static void shuffleCards(int[] deck) {
-		for (int i = 0; i < deck.length; i++) {
-			// Generate an index randomly
-			int index = pickCards(deck);
-			int temp = deck[i];
-			deck[i] = deck[index];
-			deck[index] = temp;
-		}
-	}
+    private static boolean isDifferentSuit(int[] pickedCards, int card) {
+        for (int i = 0; i < pickedCards.length; i++) {
+            if (pickedCards[i] >= 0) {
+                if (pickedCards[i] / 13 == card / 13)
+                    return false;
+            }
+        }
+        return true;
+    }
 
-	/** pickCards overloaded randomly picks four cards from a deck */
-	public static void pickCards(int[] deck, int[] picks) {
-		for (int i = 0; i < picks.length; i++) {
-			picks[i] = deck[pickCards(deck)];
-		}
-	}
+    //strictly speaking we don't even need to shuffle because we pick a random card
+    //but just for the sake of the game
+    public static void shuffle(int[] cards) {
+        for (int i = 0; i < cards.length / 2; i++) {
+            int random = (int) (Math.random() * cards.length / 2);
 
-	/** pickCards overloaded randomly picks a card from a deck */
-	public static int pickCards(int[] deck) {
-		return (int)(Math.random() * deck.length);
-	}
-
-	/** isOneOFEachSuit tests if one card of each suit was picked */
-	public static boolean isOneOFEachSuit(int[] picks) {
-		for (int i = 0; i < picks.length; i++) {
-			for (int j = 0; j < picks.length; j++) {
-				if (i != j && (picks[i] / 13 == picks[j] / 13))
-					return false;
-			}
-		}
-		return true;
-	}
-
-	/** print displays the four cards picked */
-	public static void print(int[] picks) {
-		String[] suits = {"Spades", "Hearts", "Diamonds", "Clubs"};
-		String[] ranks = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9",
-								"10", "Jack", "Queen", "King"};
-
-		for (int i = 0; i < picks.length; i++) {
-			System.out.println(ranks[picks[i] % 13] + " of " + suits[picks[i] / 13]);
-		}
-	}
+            int temp = cards[random];
+            cards[random] = cards[cards.length - 1 - random];
+            cards[cards.length - 1 - random] = temp;
+        }
+    }
 }
