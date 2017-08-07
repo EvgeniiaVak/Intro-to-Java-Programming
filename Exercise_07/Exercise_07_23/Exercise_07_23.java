@@ -15,55 +15,22 @@
 * locker is open (true) or closed (false). Initially, all lockers are closed.)   *
 *********************************************************************************/
 public class Exercise_07_23 {
-	/** Main method */
 	public static void main(String[] args) {
-		String[] lockers = new String[100];
+		boolean[] lockers = new boolean[100];
+		int[] students = new int[100];
 
-		// Close all the lockers
-		closeAllLockers(lockers);
+		//every student gets to school
+		for (int i = 0; i < students.length; i++) {
 
-		// Invoke the stuentLockerChanges method
-		studentLockerChanges(lockers);
-		
-		// Display all open lock numbers
-		print(lockers);
-	}
+		    //he starts with his number locker (j = i)
+		    //and changes not every but every x'th number locker (j += 1 + i)
+		    for (int j = i; j < lockers.length; j += 1 + i) {
+			lockers[j] = !lockers[j];
+		    }
 
-	/** isOpen returns true if l is the string "OPEN". False otherwise*/
-	public static boolean isOpen(String l) {
-		return l == "OPEN";
-	}
-
-	/** closeAllLockers fills the array with the string "CLOSED" */
-	public static void closeAllLockers(String[] lockers) {
-		for (int i = 0; i < lockers.length; i++) {
-			lockers[i] = "CLOSED";
+		    //output open lockers:
+		    String output = (lockers[i]) ? String.format("L%d ", i + 1) : "";
+		    System.out.print(output);
 		}
-	}
-
-	/** studentLockerChanges changes the string in each 
-	*   element from "CLOSED" to "OPEN" or Vice versa */
-	public static void studentLockerChanges(String[] lockers) {
-		int start = 0; // Locker student begins with
-
-		for (int s = 1; s <= lockers.length; s++) {
-			for (int l = 0; l < lockers.length; l += s) {
-				if (isOpen(lockers[l]))
-					lockers[l] = "CLOSED";
-				else
-					lockers[l] = "OPEN";
-			}
-			start++;
-		}
-	}
-
-	/** print displays all open locker numbers separated by exactly one space */
-	public static void print(String[] lockers) {
-		for (int i = 0; i < lockers.length; i++) {
-			if (isOpen(lockers[i])) {
-				System.out.print("L" + (i + 1) + " ");
-			}
-		}
-		System.out.println();
-	}
+    	}
 }
