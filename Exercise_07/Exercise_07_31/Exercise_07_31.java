@@ -43,38 +43,46 @@ public class Exercise_07_31 {
 	}
 
 	/** merge merges two sorted lists into a new sorted list.*/
-	public static int[] merge(int[] list1, int[] list2)  {
-		int[] list3 = new int[list1.length + list2.length];
-		
-		for (int i = 0; i < list1.length; i++)
-			list3[i] = list1[i];
+	public static int[] merge(int[] list1, int[] list2) {
+        int[] newList = new int[list1.length + list2.length];
 
-		for (int i = 0, j = list1.length; i < list2.length; i++, j++) {
-			list3[j] = list2[i];	
-		}
+        int count1 = 0;
+        int count2 = 0;
+        int countNew = 0;
 
-		sort(list3);
+        int sumCompareTo = 0;
+        for (int i = 0; i < newList.length; i++) {
+            int a = list1[count1];
+            int b = list2[count2];
 
-		return list3;
-	}
+            if (a < b) {
+                newList[i] = a;
+                count1++;
+                sumCompareTo++;
+            } else {
+                newList[i] = b;
+                count2++;
+                sumCompareTo++;
+            }
 
-	/** sort sorts a list in accending order*/
-	public static void sort(int[] list) {
-		for (int i = 0; i < list.length - 1; i++) {
-			int min = list[i];
-			int minIndex = i;
+            countNew++;
+            if (count1 == list1.length || count2 == list2.length)
+                break;
+        }
 
-			for (int j = i + 1; j < list.length; j++) {
-				if (list[j] < min) {
-					min = list[j];
-					minIndex = j; 
-				}					
-			}
+        if (count1 == list1.length) {
+            for (int i = countNew; i < newList.length; i++) {
+                newList[i] = list2[count2];
+                count2++;
+            }
+        } else if (count2 == list2.length) {
+            for (int i = countNew; i < newList.length; i++) {
+                newList[i] = list1[count1];
+                count1++;
+            }
+        }
 
-			if (minIndex != i) {
-				list[minIndex] = list[i];
-				list[i] = min;
-			}
-		}
-	}
+        System.out.printf("Compare to was %d times%n", sumCompareTo);
+        return newList;
+    }
 }
