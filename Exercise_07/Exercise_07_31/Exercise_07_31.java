@@ -44,45 +44,45 @@ public class Exercise_07_31 {
 
 	/** merge merges two sorted lists into a new sorted list.*/
 	public static int[] merge(int[] list1, int[] list2) {
-        int[] newList = new int[list1.length + list2.length];
+		int[] newList = new int[list1.length + list2.length];
 
-        int count1 = 0;
-        int count2 = 0;
-        int countNew = 0;
+		int count1 = 0;
+		int count2 = 0;
+		int countNew = 0;
 
-        int sumCompareTo = 0;
-        for (int i = 0; i < newList.length; i++) {
-            int a = list1[count1];
-            int b = list2[count2];
+		int sumCompareTo = 0;
+		for (int i = 0; i < newList.length; i++) {
+		    int a = list1[count1];
+		    int b = list2[count2];
 
-            if (a < b) {
-                newList[i] = a;
-                count1++;
-                sumCompareTo++;
-            } else {
-                newList[i] = b;
-                count2++;
-                sumCompareTo++;
-            }
+		    if (a < b) {
+			newList[i] = a;
+			count1++;
+			sumCompareTo++;
+		    } else {
+			newList[i] = b;
+			count2++;
+			sumCompareTo++;
+		    }
 
-            countNew++;
-            if (count1 == list1.length || count2 == list2.length)
-                break;
-        }
+		    countNew++;
+		    if (count1 == list1.length || count2 == list2.length)
+			break;
+		}
 
-        if (count1 == list1.length) {
-            for (int i = countNew; i < newList.length; i++) {
-                newList[i] = list2[count2];
-                count2++;
-            }
-        } else if (count2 == list2.length) {
-            for (int i = countNew; i < newList.length; i++) {
-                newList[i] = list1[count1];
-                count1++;
-            }
-        }
+		if (count1 == list1.length) {
+		    for (int i = countNew; i < newList.length; i++) {
+			newList[i] = list2[count2];
+			count2++;
+		    }
+		} else if (count2 == list2.length) {
+		    for (int i = countNew; i < newList.length; i++) {
+			newList[i] = list1[count1];
+			count1++;
+		    }
+		}
 
-        System.out.printf("Compare to was %d times%n", sumCompareTo);
-        return newList;
+		System.out.printf("Compare to was %d times%n", sumCompareTo);
+		return newList;
     }
 }
