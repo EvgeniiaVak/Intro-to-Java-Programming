@@ -13,191 +13,140 @@
 import java.util.Scanner;
 
 public class Exercise_08_09 {
-	/** Main method */
-	public static void main(String[] args) {
-		// Create a empty board
-		String [][] board = getBoard();
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean win = false;
+        char[][] checkedPlaces = new char[3][3];
+        for (int i = 0; i < checkedPlaces.length; i++) {
+            for (int j = 0; j < checkedPlaces[i].length; j++) {
+                checkedPlaces[i][j] = ' ';
+            }
+        }
 
-		// Create two players token
-		String[] tokens = {" X "," O "};
+        // draw the board
+        drawBoard(checkedPlaces);
 
-		int result; // game status result
+        int counter = 0;
+        while (!win) {
+            char player = ' ';
+            if (counter % 2 == 0)
+                player = 'X';
+            else
+                player = 'O';
+            // ask for input from X or O
+            int[] coords = promptForPlacement(scanner, checkedPlaces, player);
+            
+            //redraw the board with new data
+            updateBoard(checkedPlaces, coords, player);
+            drawBoard(checkedPlaces);
 
-		// Repeat while result is continue
-		do {
-			// Display board
-			print(board);
+            // repeat if nobody win
+            char winner = lookForWinner(checkedPlaces, player);
+            win = winner != ' ';
 
-			// Get available cell to mark
-			int[] cell = getCell(board, tokens[0]);
-			
-			// Mark available cell with player's token
-			placeToken(board, cell, tokens[0]);
-	
-			// Determine game status
-			result = gameStatus(board, tokens[0]);
+            if (win) {
+                System.out.printf("%c player won", player);
+            }
 
-			// If status is continue make next player take turn
-			if (result == 2) {
-				swap(tokens);
-			}
+            System.out.println("\n");
+            counter++;
+        }
 
-		} while(result == 2);
+    }
 
-		// Display board
-		print(board);
+    private static char lookForWinner(char[][] checkedPlaces, char player) {
+        int boardSize = checkedPlaces.length;
+        char nobody = ' ';
 
-		// Display game results
-		if (result == 0)
-			System.out.println(tokens[0] + "player won");
-		else
-			System.out.println("Players draw");
+        //check horizontally
+        for (int row = 0; row < boardSize; row++) {
+            if (hasThree(checkedPlaces[row], player))
+                return player;
+        }
 
-	}
+        //check vertically
+        for (int i = 0; i < boardSize; i++) {
+            char[] column = new char[boardSize];
 
-	/** gameStatus determines the status of the game (win, draw, or continue) */
-	public static int gameStatus(String[][] m, String e) {
-		if (isWin(m, e))
-			return 0; // Win
-		else if (isDraw(m))
-			return 1; // Draw
-		else
-			return 2; // Continue
-	}
+            for (int row = 0; row < boardSize; row++) {
+                column[row] = checkedPlaces[row][i];
+            }
 
-	/** isWin returns true if player has placed three tokens in, 
-	    a horizontal vertical, or diagonal row on the grid */
-	public static boolean isWin(String[][] m, String t) { 
-		return isHorizontalWin(m, t) || isVerticalWin(m, t) || isDiagonalWin(m, t);
-	}
+            if (hasThree(column, player))
+                return player;
+        }
 
-	/** isHorizontalWin returns true if player has 
-	    placed three tokens in a horizontal row */
-	public static boolean isHorizontalWin(String[][] m, String t) {
-		for (int i = 0; i < m.length; i++) {
-			int count = 0;
-			for (int j = 0; j < m[i].length; j++) {
-				if (m[i][j] == t)
-					count++;
-			}
-			if (count == 3)
-				return true;
-		}
-		return false;
-	}
+        //check diagonally
+        char[] diagonal1 = new char[boardSize];
+        for (int i = 0; i < boardSize; i++) {
+            diagonal1[i] = checkedPlaces[i][i];
+        }
+        if (hasThree(diagonal1, player))
+            return player;
 
-	/** isVerticalWin returns true if player has 
-	    placed three tokens in a vertical row */
-	public static boolean isVerticalWin(String[][] m, String t) {
-		for (int i = 0; i < m.length; i++) {
-			int count = 0;
-			for (int j = 0; j < m[i].length; j++) {
-				if (m[j][i] == t)
-					count++;
-			}
-			if (count == 3)
-				return true;
-		}
-		return false;
-	}
+        char[] diagonal2 = new char[boardSize];
+        for (int i = 0; i < boardSize; i++) {
+            diagonal2[i] = checkedPlaces[i][2 - i];
+        }
+        if (hasThree(diagonal2, player))
+            return player;
 
-	/** isDiagonalWin returns true if player has 
-	    placed three tokens in a diagonal row */
-	public static boolean isDiagonalWin(String[][] m, String t) {
-		int count = 0;
-		for (int i = 0; i < m.length; i++) {
-			if (m[i][i] == t)
-				count++;
-			if (count == 3)
-				return true;
-		}
+        return nobody;
+    }
 
-		count = 0;
-		for (int i = 0, j = m[i].length - 1; j >= 0 ; j--, i++) {
-			if (m[i][j] == t)
-				count++;
-			if (count == 3)
-				return true;
-		}
-		return false;
-	}
+    private static boolean hasThree(char[] places, char player) {
+        for (int i = 0; i < places.length; i++) {
+            if (places[i] != player)
+                return false;
+        }
+        return true;
+    }
 
-	/** isDraw returns true if all the cells on the grid have been  
-		 filled with tokens and neither player has achieved a win */
-	public static boolean isDraw(String[][] m) {
-		for (int i = 0; i < m.length; i++) {
-			for (int j = 0; j < m[i].length; j++) {
-				if (m[i][j] == "   ")
-					return false;
-			}
-		}
-		return true;
-	}
+    private static void updateBoard(char[][] checkedPlaces, int[] coords, char player) {
+        for (int i = 0; i < checkedPlaces.length; i++) {
+            for (int j = 0; j < checkedPlaces[i].length; j++) {
+                if (i == coords[0] && j == coords[1])
+                    checkedPlaces[i][j] = player;
+            }
+        }
+    }
 
-	/** swap swaps the elements in an arrray */
-	public static void swap(String[] p) {
-		String temp = p[0];
-		p[0] = p[1];
-		p[1] = temp;
-	}
 
-	/** placeToken fills the matrix cell with the player's token */
-	public static void placeToken(String[][] m, int[] e, String t) {
-		m[e[0]][e[1]] = t;
-	}
+    private static int[] promptForPlacement(Scanner scanner,char[][] checkedPlaces, char player) {
+        int[] coords = new int[2];
 
-	/** getCell returns a valid cell input by user */
-	public static int[] getCell(String[][] m, String t) {
-		// Create a Scanner
-		Scanner input = new Scanner(System.in);
-		int[] cell = new int[2]; // Cell row and column
+        while (true){
+            System.out.printf("Enter a row (0, 1, or 2) for player %c: ", player);
+            coords[0] = scanner.nextInt();
+            System.out.printf("Enter a column (0, 1, or 2) for player %c: ", player);
+            coords[1] = scanner.nextInt();
+            if (!isValidInput(checkedPlaces, coords))
+                System.out.println("Invalid input!");
+            else
+                break;
+        }
+        return coords;
+    }
 
-		// Prompt player to enter a token
-		do {
-			System.out.print("Enter a row(0, 1, or 2) for player " + t + ": ");
-			cell[0] = input.nextInt();
-			System.out.print("Enter a column(0, 1, or 2) for player " + t + ": ");
-			cell[1] = input.nextInt();
+    private static boolean isValidInput (char[][] checkedPlaces, int[] coords) {
+        return  isBetween0and2(coords[0]) &&
+                isBetween0and2(coords[1]) &&
+                checkedPlaces[coords[0]][coords[1]] == ' ';
+    }
 
-		} while (!isValidCell(m, cell));
-		return cell;
-	}
+    private static boolean isBetween0and2(int number) {
+        return number >= 0 && number <= 2;
+    }
 
-	/** isValidCell returns true is cell is empty and is in a 3 x 3 array */
-	public static boolean isValidCell(String[][] m, int[] cell) {
-		for (int i = 0; i < cell.length; i++) {
-			if (cell[i] < 0 || cell[i] >= 3) {
-				System.out.println("Invalid cell");
-				return false;
-			}
-		}
-		if (m[cell[0]][cell[1]] != "   ") {
-			System.out.println(
-				"\nRow " + cell[0] + " column " + cell[1] + " is filled");
-			return false;
-		}
-		return true;		
-	}
-
-	/** getBoard returns a 3 x 3 array filled with blank spaces */
-	public static String[][] getBoard() {
-		String[][] m = new String[3][3];
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				m[i][j] = "   ";
-			}
-		}
-		return m;
-	}
-
-	/** print displays the board */
-	public static void print(String[][] m) {
-		System.out.println("\n-------------");
-		for (int i = 0; i < m.length; i++) {
-			for (int j = 0; j < m[i].length; j++) {
-				System.out.print("|" + m[i][j]);
-			}
-			System.out.println("|\n-------------");
-		}
-	}
+    private static void drawBoard(char[][] checkedPlaces) {
+        System.out.println("-------------");
+        for (int row = 0; row < checkedPlaces.length; row++) {
+            System.out.print("|");
+            for (int cell = 0; cell < checkedPlaces[row].length; cell++) {
+                System.out.printf(" %c |", checkedPlaces[row][cell]);
+            }
+            System.out.println();
+            System.out.println("-------------");
+        }
+    }
 }
