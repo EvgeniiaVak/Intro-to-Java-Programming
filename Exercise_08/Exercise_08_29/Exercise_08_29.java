@@ -24,66 +24,33 @@ public class Exercise_08_29 {
 			(equals(list1, list2) ? " " : " not ") + "identical");
 	}
 
-	/** getArray initializes a 3 x 3 array with user input */
-	public static int[][] getArray() {
-		Scanner input = new Scanner(System.in);
-		final int ROWS = 3;
-		final int COLUMNS = 3;
-		int[][] m = new int[ROWS][COLUMNS];
-		for (int i = 0; i < m.length; i++) {
-			for (int j = 0; j < m[i].length; j++) {
-				m[i][j] = input.nextInt();
-			}
-		}
-		return m;
-	}
+    /** (Identical arrays) The two-dimensional arrays m1 and m2 are identical
+     * if they have the same contents. */
+    public static boolean equals(int[][] m1, int[][] m2) {
+        if (!(m1.length == m2.length))
+            return false;
 
+        //take a value from m1
+        for (int i = 0; i < m1.length; i++) {
+            for (int j = 0; j < m1[i].length; j++) {
 
-	/** equals returns true if m1 and m2 are identical */
-	public static boolean equals(int[][] m1, int[][] m2) {
-		int[] list1 = sort(m1);
-		int[] list2 = sort(m2);
-		for (int i = 0; i < list1.length; i++) {
-			if (list1[i] != list2[i])
-				return false;
-		}
-		return true;
-	}
+                //compare it to every value from m2
+                int occurred = 0;
+                for (int k = 0; k < m2.length; k++) {
+                    for (int l = 0; l < m2[k].length; l++) {
 
-	/** matrixToArray returns an array initialized with a matrix elements */
-	public static int[] matrixToArray(int[][] m) {
-		int[] list = new int[m.length * m[0].length];
-		int k = 0;
-		for (int i = 0; i < m.length; i++) {
-			for (int j = 0; j < m[i].length; j++) {
-				list[k] = m[i][j];
-				k++;
-			}
-		}
-		return list;
-	}
-	
-	/** sort sorts each column in a 3 x 3 array in accending order */
-	public static int[] sort(int[][] m) {
-		int [] list = matrixToArray(m);
-		for (int i = 0; i < 3; i++) {
-			// Find the min in the column 1
-			int min = list[i];
-			int minIndex = i;
+                        if (m1[i][j] == m2[k][l])
+                            occurred ++;
 
-			for (int j = i + 1; j < 3; j++) {
-				if (min > list[j]) {
-					min = list[j];
-					minIndex = j;
-				}
-			}
+                    }
+                }
+                //if there is no such value in m2 - return false
+                if (occurred == 0)
+                    return false;
 
-			// Swap
-			if (minIndex != i) {
-				list[minIndex] = list[i];
-				list[i] = min;
-			}
-		}
-		return list;
-	}
+            }
+        }
+
+        return true;
+    }
 }
