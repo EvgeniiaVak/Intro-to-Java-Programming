@@ -25,7 +25,7 @@ public class LargestBlock {
         int[] block = findLargestBlock(matrix);
         if (matrix.length != 0)
             System.out.printf("The maximum square submatrix is at (%d, %d) with size %d",
-                block[0], block[1], block[block.length - 1] + 1);
+                block[0], block[1], block[2]);
 
         scanner.close();
         is.close();
@@ -50,17 +50,13 @@ public class LargestBlock {
                     // x 1 0
                     // 1 1 0
                     // 0 0 0
-                    int counter = 0;
-                    boolean needNextStep;
 
-                    //check all the rows till [cell + size] in column [cell + possible size + 1]
-                    //check all the columns(cells) from [cell + size] till back to the starting cell
-                    // (on the bottom of the block row)
-                    //if counter = possible size * 2 + 1  -- possible size ++
-                    //if possible size > size -> size == possible size
-
+                    boolean foundAllOnes;
                     do {
-                        needNextStep = false;
+                        int counter = 0;
+                        foundAllOnes = false; // assume we fail to find all 1s
+
+                        //check all the rows till [cell + size] in column [cell + possible size + 1]
                         if ((row + posSize) < m.length && cell + 1 < m[row].length) {
                             for (int i = row; i < row + posSize; i++) {
                                 if (m[i][cell + 1] == 1)
@@ -68,6 +64,8 @@ public class LargestBlock {
                             }
                         }
 
+                        //check all the columns(cells) from [cell + size] till back to the starting cell
+                        // (on the row beneath block)
                         if ((cell + posSize) < m[row].length && row + posSize < m.length) {
                             for (int i = cell + posSize; i >= cell; i--) {// the 1 in the angle counts here
                                 if (m[row + posSize][i] == 1)
@@ -75,11 +73,13 @@ public class LargestBlock {
                             }
                         }
 
-
+                        //if counter equals possible size * 2 + 1  -- increase possible size
+                        // (which means each surrounding digit indeed equals 1
                         if (counter == posSize * 2 + 1) {
                             posSize++;
-                            needNextStep = true;
+                            foundAllOnes = true;
 
+                            //if it's indeed the largest block so far - show it
                             if (posSize > size) {
                                 size = posSize;
                                 x = posX;
@@ -87,7 +87,7 @@ public class LargestBlock {
                             }
                         }
 
-                    } while (needNextStep);
+                    } while (foundAllOnes);
                 } else {
                     //in case m[row][cell] == 0 we should begin next iteration with nearest digit
                     posSize = 0;
@@ -97,6 +97,6 @@ public class LargestBlock {
             }
         }
 
-        return new int[]{x, y};
+        return new int[]{x, y, size};
     }
 }
