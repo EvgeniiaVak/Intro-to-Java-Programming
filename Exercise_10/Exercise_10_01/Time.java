@@ -1,76 +1,41 @@
-                   //UML diagram
-/************************************************
-*                      Time                     *
-*-----------------------------------------------*
-* -hour: long                                   *
-* -minute: long                                 *
-* -second: long                                 *
-* Time()                                        *
-* Time(elapseTime: long)                        *
-* Time(hour: long, minute: long, second: long)  *
-* getHour(): long                               *
-* getMinute(): long                             *
-* getSecond(): long                             *
-* setTime(elapseTime: long)                     *
-************************************************/
-
-// Implement Time class
 public class Time {
-	// Data fields
-	private long hour;
-	private long minute;
-	private long second;
+    int hour, minute, second;
 
-	// Creates a Time object for the current time
-	Time() {
-		this(0);	
-	}
+    public Time() {
+        this(System.currentTimeMillis());
+    }
 
-	// Constructs a Time object with a specified elapsed 
-	// time since midnight, January 1, 1970, in milliseconds.
-	Time(long elapseTime) {
-		setTime(elapseTime);
-	}
+    public Time(long elapsedTime) {
+        setTime(elapsedTime);
+    }
 
-	// Constructs a Time object with the specified hour, minute, and second
-	Time(long hour, long minute, long second) {
-		this.hour = hour;
-		this.minute = minute;
-		this.second = second;
-	}
+    public Time(int hour, int minute, int second) {
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
+    }
 
-	// Return hour
-	public long getHour() {
-		return hour;
-	}
+    public void setTime(long elapsedTime) {
+        long secs = elapsedTime / 1000;
+        second = (int) (secs % 60);
+        minute = (int) ((secs / 60) % 60);
+        hour = (int) (secs / 3600) % 24;
+    }
 
-	// Return minute
-	public long getMinute() {
-		return minute;
-	}
+    public int getHour() {
+        return hour;
+    }
 
-	// Return second
-	public long getSecond() {
-		return second;
-	}
+    public int getMinute() {
+        return minute;
+    }
 
-	// Sets a new time for the object using the elapsed time
-	public void setTime(long elapseTime) {
-		long totalMilliseconds = System.currentTimeMillis();
-		long totalSeconds = totalMilliseconds / 1000;
-		second = totalSeconds % 60;
-		long totalMinutes = totalSeconds / 60;
-		minute = totalMinutes % 60;
-		long totalHours = totalMinutes / 60;
-		hour = totalHours % 24;
+    public int getSecond() {
+        return second;
+    }
 
-		if (elapseTime > 0) {
-			totalSeconds = elapseTime / 1000;
-			second += totalSeconds % 60;
-			totalMinutes = totalSeconds / 60;
-			minute += totalMinutes % 60;
-			totalHours = totalMinutes / 60;
-			hour += totalHours % 24;
-		}
-	}
+    @Override
+    public String toString() {
+        return String.format("%2d:%2d:%2d", hour, minute, second);
+    }
 }
